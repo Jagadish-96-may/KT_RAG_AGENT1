@@ -21,41 +21,199 @@ def home():
 <title>KT RAG Agent</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  body { font-family: -apple-system, Segoe UI, Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; background: #f7f7f9; color: #222; }
-  h1 { font-size: 24px; }
-  .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-  input[type=file] { margin: 10px 0; }
-  button { background: #2563eb; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 15px; }
-  button:hover { background: #1d4ed8; }
-  button:disabled { background: #999; cursor: not-allowed; }
-  #uploadStatus, #answerBox { margin-top: 14px; padding: 12px; border-radius: 8px; background: #f0f4ff; display: none; white-space: pre-wrap; }
-  input[type=text] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; box-sizing: border-box; margin-top: 6px; }
-  .row { display: flex; gap: 10px; margin-top: 10px; }
+  * { box-sizing: border-box; }
+  :root {
+    --bg: radial-gradient(circle at 25% 15%, #1e3a5f, #0f1f3d 55%, #060d1f 100%);
+    --text-main: white;
+    --text-sub: rgba(255,255,255,0.6);
+    --card-bg: rgba(255,255,255,0.05);
+    --card-border: rgba(212,175,55,0.2);
+    --input-bg: rgba(255,255,255,0.04);
+    --input-border: rgba(255,255,255,0.15);
+    --input-text: white;
+    --placeholder: rgba(255,255,255,0.35);
+    --answer-bg: rgba(212,175,55,0.08);
+    --answer-text: rgba(255,255,255,0.85);
+  }
+  body[data-theme="light"] {
+    --bg: linear-gradient(135deg, #fdf6e3, #fff9ed 60%, #fdf0d5 100%);
+    --text-main: #2a2110;
+    --text-sub: #6b5d3f;
+    --card-bg: white;
+    --card-border: rgba(212,175,55,0.4);
+    --input-bg: #faf6ea;
+    --input-border: rgba(212,175,55,0.35);
+    --input-text: #2a2110;
+    --placeholder: #b0a17a;
+    --answer-bg: #fdf3d8;
+    --answer-text: #4a3c1e;
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    background: var(--bg);
+    min-height: 100vh;
+    color: var(--text-main);
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .top-bar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+  .theme-toggle {
+    background: rgba(212,175,55,0.15);
+    border: 1px solid rgba(212,175,55,0.35);
+    color: #d4af37;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .layout { display: flex; gap: 24px; align-items: flex-start; }
+  .mascot { flex-shrink: 0; margin-top: 40px; }
+  .content { flex: 1; min-width: 0; }
+  .badge {
+    display: inline-block;
+    background: rgba(212,175,55,0.15);
+    color: #d4af37;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(212,175,55,0.35);
+  }
+  h1 { font-size: 30px; color: var(--text-main); margin: 0 0 6px; font-weight: 600; }
+  .subtitle { color: var(--text-sub); font-size: 14px; margin-bottom: 26px; }
+  .card {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 22px;
+    margin-bottom: 18px;
+  }
+  .step-label { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; margin: 0 0 14px; color: var(--text-main); }
+  .step-num {
+    background: rgba(212,175,55,0.85);
+    color: #0f1f3d;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+  }
+  input[type=file] { display: block; margin: 6px 0 14px; font-size: 14px; color: var(--text-sub); }
+  button.action-btn {
+    background: linear-gradient(135deg, #d4af37, #b8860b);
+    color: #0f1f3d;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  button.action-btn:hover { filter: brightness(1.08); }
+  #uploadStatus, #answerBox {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--answer-bg);
+    border-left: 3px solid #d4af37;
+    display: none;
+    white-space: pre-wrap;
+    font-size: 13px;
+    color: var(--answer-text);
+    line-height: 1.5;
+  }
+  input[type=text] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--input-border);
+    font-size: 14px;
+    background: var(--input-bg);
+    color: var(--input-text);
+    outline: none;
+  }
+  input[type=text]::placeholder { color: var(--placeholder); }
+  input[type=text]:focus { border-color: #d4af37; }
+  .row { display: flex; gap: 8px; }
   .row input { flex: 1; }
+  @media (max-width: 640px) {
+    .layout { flex-direction: column; align-items: center; }
+    .mascot { margin-top: 0; }
+  }
 </style>
 </head>
-<body>
-  <h1>KT RAG Agent</h1>
-  <p>Upload a knowledge-transfer PDF, then ask questions grounded only in that document.</p>
-
-  <div class="card">
-    <h3>1. Upload PDF</h3>
-    <input type="file" id="pdfFile" accept="application/pdf">
-    <br>
-    <button onclick="uploadPDF()">Upload & Index</button>
-    <div id="uploadStatus"></div>
+<body data-theme="dark">
+  <div class="top-bar">
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">Light mode</button>
   </div>
 
-  <div class="card">
-    <h3>2. Ask a Question</h3>
-    <div class="row">
-      <input type="text" id="question" placeholder="e.g. What is the deployment process?">
-      <button onclick="askQuestion()">Ask</button>
+  <div class="layout">
+    <svg class="mascot" width="120" height="160" viewBox="0 0 120 160">
+      <ellipse cx="58" cy="152" rx="36" ry="6" fill="rgba(0,0,0,0.3)"/>
+      <rect x="30" y="62" width="56" height="58" rx="18" fill="#d4af37"/>
+      <text x="58" y="98" font-size="20" text-anchor="middle" fill="#0f1f3d" font-family="monospace" font-weight="bold">?</text>
+      <circle cx="58" cy="34" r="30" fill="#f5c542"/>
+      <path d="M40 20 Q58 4 76 20" stroke="#0f1f3d" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="48" cy="32" r="6" fill="white"/>
+      <circle cx="50" cy="32" r="3" fill="#0f1f3d"/>
+      <path d="M68 26 L78 22" stroke="#0f1f3d" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M40 46 Q58 58 76 42" stroke="#0f1f3d" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="30" cy="40" r="6" fill="#e8935a" opacity="0.7"/>
+      <circle cx="86" cy="40" r="6" fill="#e8935a" opacity="0.7"/>
+      <rect x="52" y="2" width="12" height="10" rx="3" fill="#f5c542"/>
+      <circle cx="58" cy="0" r="4" fill="#d4af37"/>
+      <rect x="4" y="70" width="13" height="32" rx="6" fill="#d4af37" transform="rotate(-15 10 86)"/>
+      <rect x="103" y="66" width="13" height="32" rx="6" fill="#d4af37" transform="rotate(20 110 82)"/>
+      <rect x="38" y="120" width="17" height="26" rx="6" fill="#b8860b"/>
+      <rect x="63" y="120" width="17" height="26" rx="6" fill="#b8860b"/>
+    </svg>
+
+    <div class="content">
+      <span class="badge">KNOWLEDGE TRANSFER</span>
+      <h1>KT RAG Agent</h1>
+      <p class="subtitle">Upload a knowledge-transfer PDF, then ask questions grounded only in that document.</p>
+
+      <div class="card">
+        <p class="step-label"><span class="step-num">1</span> Upload PDF</p>
+        <input type="file" id="pdfFile" accept="application/pdf">
+        <br>
+        <button class="action-btn" onclick="uploadPDF()">Upload &amp; Index</button>
+        <div id="uploadStatus"></div>
+      </div>
+
+      <div class="card">
+        <p class="step-label"><span class="step-num">2</span> Ask a Question</p>
+        <div class="row">
+          <input type="text" id="question" placeholder="e.g. What is the deployment process?">
+          <button class="action-btn" onclick="askQuestion()">Ask</button>
+        </div>
+        <div id="answerBox"></div>
+      </div>
     </div>
-    <div id="answerBox"></div>
   </div>
 
 <script>
+function applyTheme(theme) {
+  document.body.setAttribute('data-theme', theme);
+  document.getElementById('themeBtn').textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
+  localStorage.setItem('kt-rag-theme', theme);
+}
+
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+
+(function initTheme() {
+  const saved = localStorage.getItem('kt-rag-theme');
+  applyTheme(saved || 'dark');
+})();
+
 async function uploadPDF() {
   const fileInput = document.getElementById('pdfFile');
   const statusDiv = document.getElementById('uploadStatus');
