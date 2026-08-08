@@ -69,8 +69,13 @@ def home():
     font-size: 13px;
     font-weight: 600;
   }
-  .layout { display: flex; gap: 24px; align-items: flex-start; }
-  .mascot { flex-shrink: 0; margin-top: 40px; }
+  .layout { display: flex; gap: 20px; align-items: flex-start; position: relative; }
+  .glow {
+    position: absolute; width: 220px; height: 220px;
+    background: rgba(212,175,55,0.08); border-radius: 50%;
+    top: -80px; right: -60px; filter: blur(10px); pointer-events: none;
+  }
+  .mascot { flex-shrink: 0; margin-top: 60px; }
   .content { flex: 1; min-width: 0; }
   .badge {
     display: inline-block;
@@ -153,24 +158,25 @@ def home():
   </div>
 
   <div class="layout">
-    <svg class="mascot" width="120" height="160" viewBox="0 0 120 160">
-      <ellipse cx="58" cy="152" rx="36" ry="6" fill="rgba(0,0,0,0.3)"/>
-      <rect x="30" y="62" width="56" height="58" rx="18" fill="#d4af37"/>
-      <text x="58" y="98" font-size="20" text-anchor="middle" fill="#0f1f3d" font-family="monospace" font-weight="bold">?</text>
-      <circle cx="58" cy="34" r="30" fill="#f5c542"/>
-      <path d="M40 20 Q58 4 76 20" stroke="#0f1f3d" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <circle cx="48" cy="32" r="6" fill="white"/>
-      <circle cx="50" cy="32" r="3" fill="#0f1f3d"/>
-      <path d="M68 26 L78 22" stroke="#0f1f3d" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M40 46 Q58 58 76 42" stroke="#0f1f3d" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <circle cx="30" cy="40" r="6" fill="#e8935a" opacity="0.7"/>
-      <circle cx="86" cy="40" r="6" fill="#e8935a" opacity="0.7"/>
-      <rect x="52" y="2" width="12" height="10" rx="3" fill="#f5c542"/>
-      <circle cx="58" cy="0" r="4" fill="#d4af37"/>
-      <rect x="4" y="70" width="13" height="32" rx="6" fill="#d4af37" transform="rotate(-15 10 86)"/>
-      <rect x="103" y="66" width="13" height="32" rx="6" fill="#d4af37" transform="rotate(20 110 82)"/>
-      <rect x="38" y="120" width="17" height="26" rx="6" fill="#b8860b"/>
-      <rect x="63" y="120" width="17" height="26" rx="6" fill="#b8860b"/>
+    <div class="glow"></div>
+    <svg class="mascot" width="110" height="150" viewBox="0 0 110 150">
+      <ellipse cx="55" cy="140" rx="32" ry="6" fill="rgba(0,0,0,0.25)"/>
+      <rect x="30" y="55" width="50" height="55" rx="14" fill="#d4af37"/>
+      <rect x="38" y="63" width="34" height="30" rx="8" fill="#0f1f3d"/>
+      <circle cx="55" cy="35" r="26" fill="#d4af37"/>
+      <circle cx="46" cy="32" r="5" fill="#0f1f3d"/>
+      <circle cx="64" cy="32" r="5" fill="#0f1f3d"/>
+      <circle cx="47" cy="30" r="1.6" fill="white"/>
+      <circle cx="65" cy="30" r="1.6" fill="white"/>
+      <path d="M46 44 Q55 50 64 44" stroke="#0f1f3d" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <rect x="10" y="9" width="8" height="16" rx="4" fill="#d4af37"/>
+      <rect x="92" y="9" width="8" height="16" rx="4" fill="#d4af37"/>
+      <circle cx="14" cy="8" r="4" fill="#f5e08c"/>
+      <circle cx="96" cy="8" r="4" fill="#f5e08c"/>
+      <rect x="8" y="65" width="14" height="34" rx="7" fill="#d4af37"/>
+      <rect x="88" y="65" width="14" height="34" rx="7" fill="#d4af37"/>
+      <rect x="35" y="110" width="16" height="26" rx="6" fill="#b8860b"/>
+      <rect x="59" y="110" width="16" height="26" rx="6" fill="#b8860b"/>
     </svg>
 
     <div class="content">
