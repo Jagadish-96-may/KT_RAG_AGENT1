@@ -35,7 +35,7 @@ def home():
 </style>
 </head>
 <body>
-  <h1>📄 KT RAG Agent</h1>
+  <h1>KT RAG Agent</h1>
   <p>Upload a knowledge-transfer PDF, then ask questions grounded only in that document.</p>
 
   <div class="card">
@@ -71,9 +71,9 @@ async function uploadPDF() {
     const res = await fetch('/upload', { method: 'POST', body: formData });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || 'Upload failed');
-    statusDiv.textContent = `✅ Indexed "${data.filename}" — ${data.chunks_indexed} chunks.`;
+    statusDiv.textContent = 'Indexed "' + data.filename + '" - ' + data.chunks_indexed + ' chunks.';
   } catch (err) {
-    statusDiv.textContent = '❌ ' + err.message;
+    statusDiv.textContent = 'Error: ' + err.message;
   }
 }
 
@@ -95,7 +95,7 @@ async function askQuestion() {
     if (!res.ok) throw new Error(data.detail || 'Request failed');
     answerBox.textContent = data.answer;
   } catch (err) {
-    answerBox.textContent = '❌ ' + err.message;
+    answerBox.textContent = 'Error: ' + err.message;
   }
 }
 </script>
